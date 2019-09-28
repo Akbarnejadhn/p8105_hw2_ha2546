@@ -33,6 +33,7 @@ trash_data =
 prcpt2017_data = 
   read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", skip = 1) %>% 
   janitor::clean_names() %>% 
+  drop_na() %>% 
   mutate(
     year = "2017"
   )
@@ -40,9 +41,15 @@ prcpt2017_data =
 prcpt2018_data = 
   read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2018 Precipitation", skip = 1) %>% 
   janitor::clean_names() %>% 
-  drop_na(total) %>% 
+  drop_na() %>% 
   mutate(
     year = "2018"
+  )
+
+prcpt_data =
+  bind_rows(prcpt2017_data, prcpt2018_data) %>% 
+  mutate(
+    month = format(month(num = c(1:12)), month.name)
   )
 ```
 
