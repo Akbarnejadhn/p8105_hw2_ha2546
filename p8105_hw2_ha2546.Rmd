@@ -28,3 +28,21 @@ trash_data =
 
 ```
 
+```{r precipitation}
+
+prcpt2017_data = 
+  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    year = "2017"
+  )
+
+prcpt2018_data = 
+  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2018 Precipitation", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  drop_na(total) %>% 
+  mutate(
+    year = "2018"
+  )
+```
+
