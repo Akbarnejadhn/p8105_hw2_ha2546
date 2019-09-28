@@ -7,5 +7,24 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(dplyr)
+```
+
+```{r Mr.Trash Wheel}
+
+library(readxl)
+
+trash_data = 
+  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel") %>% 
+  janitor::clean_names() %>% 
+  select(-x15) %>% 
+  drop_na(dumpster) %>% 
+  mutate(
+    sports_balls = round(sports_balls),
+    as.integer(sports_balls)
+  )
+
 ```
 
