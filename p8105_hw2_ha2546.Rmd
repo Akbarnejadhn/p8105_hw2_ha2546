@@ -47,9 +47,16 @@ prcpt2018_data =
   )
 
 prcpt_data =
-  bind_rows(prcpt2017_data, prcpt2018_data) %>% 
+  bind_rows(prcpt2017_data, prcpt2018_data) %>%
   mutate(
-    month = format(month(num = c(1:12)), month.name)
+    month = month.name[month]
   )
+prcpt_data
+```
+
+## inline for problem 1
+
+```{r}
+
 ```
 
