@@ -62,23 +62,27 @@ pols_month_data = read_csv("data/pols-month.csv") %>%
   janitor::clean_names() %>%
   separate(mon, into = c("year", "month", "day")) %>% 
   mutate(
-    month = as.integer(month),
-    month = month.name[month],
+    year = as.integer(year),
+    day = as.integer(day),
+    month = month.name[as.integer(month)],
     president = recode(prez_gop, "1" = "gop" , "0" = "dem"),
   ) %>% 
     select(-starts_with("prez"))
 
 ```
 
-```{r prob2_unemployment}
+```{r prob2_snp}
 
-unemployment_data = read_csv("data/unemployment.csv")
+snp_data = read_csv("data/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(date, into = c("year", "month", "day"))
+
 
 ```
 
-```{r}
+```{r prob2_unemployment}
 
-snp_data = read_csv("data/snp.csv")
+unemployment_data = read_csv("data/unemployment.csv")
 
 ```
 
