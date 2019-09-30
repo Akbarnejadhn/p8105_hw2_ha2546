@@ -54,9 +54,23 @@ prcpt_data =
 prcpt_data
 ```
 
-## inline for problem 1
+In Mr. Trash Wheel data, we have `r nrow(trash_data)` observations, and we have key variables such as dumpster, month, year, and date. In resulting precipitation dataset which we obtained from combining precipitation data of 2017 and 2018, we have `r nrow(prcpt_data)` total precipitation observations in total and we have ey variables month and year. According to the precipitation dataset, the total precipitation in 2018 is `r sum(pull(prcpt2018_data, total))` inches and the median number of sports balls in a dumpster in 2017 is `r median(pull(filter(trash_data, year == 2017), sports_balls))`
 
 ```{r}
+
+pols_month_data = read_csv("data/pols-month.csv") %>% 
+  janitor::clean_names() %>%
+  separate(mon, into = c("year", "month", "day")) %>% 
+  mutate(
+    month = as.integer(month),
+    month = month.name[month],
+    president = recode(prez_gop, "1" = "gop" , "0" = "dem"),
+  ) %>% 
+    select(-starts_with("prez"))
+
+unemployment_data = read_csv("data/unemployment.csv")
+snp_data = read_csv("data/snp.csv")
+
 
 ```
 
