@@ -75,8 +75,17 @@ pols_month_data = read_csv("data/pols-month.csv") %>%
 
 snp_data = read_csv("data/snp.csv") %>% 
   janitor::clean_names() %>% 
-  separate(date, into = c("year", "month", "day"))
-
+  separate(date, into = c("month", "day", "year")) %>%    # why seperates like this?
+  mutate (
+    year = as.integer(year),
+    day = as.integer(day),
+    month = as.integer(month)
+  ) %>% 
+  arrange(year, month) %>% 
+  select(year, month, day, close) %>% 
+  mutate(                                                 # had to mutate twice
+    month = month.name[as.integer(month)]
+  )
 
 ```
 
