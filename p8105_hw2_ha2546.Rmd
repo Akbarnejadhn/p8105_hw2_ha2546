@@ -122,9 +122,14 @@ pop_names_data = read_csv("data/Popular_Baby_Names.csv") %>%
     ethnicity = replace(ethnicity, ethnicity == "BLACK NON HISP", "BLACK NON HISPANIC")
   ) %>% 
   mutate(
-    ethnicity = str_to_lower(ethnicity)
+    ethnicity = str_to_title(ethnicity)                  # should we make gender and ethnicity lower case?!
   )
 
+pop_names_data = distinct(pop_names_data)
+
+```
+
+```{r Olivia_name}
 
 ```
 
