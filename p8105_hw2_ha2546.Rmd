@@ -105,6 +105,26 @@ unemployment_data = read_csv("data/unemployment.csv") %>%
 
 join_pols_snp = left_join(pols_month_data, snp_data, by = c("year", "month", "day"))
 
-join_all = left_join(join_pols_snp, unemployment_data, by = c("year", "month"))
+join_all = left_join(join_pols_snp, unemployment_data, by = c("year", "month"))        # could we use piping here?
+```
+
+## inline code for problem 2
+
+```{r prob3}
+
+pop_names_data = read_csv("data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(
+    childs_first_name = str_to_title(childs_first_name),
+    gender = str_to_lower(gender),
+    ethnicity = replace(ethnicity, ethnicity == "ASIAN AND PACI" , "ASIAN AND PACIFIC ISLANDER"),
+    ethnicity = replace(ethnicity, ethnicity == "WHITE NON HISP", "WHITE NON HISPANIC"),
+    ethnicity = replace(ethnicity, ethnicity == "BLACK NON HISP", "BLACK NON HISPANIC")
+  ) %>% 
+  mutate(
+    ethnicity = str_to_lower(ethnicity)
+  )
+
+
 ```
 
