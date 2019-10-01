@@ -101,3 +101,10 @@ unemployment_data = read_csv("data/unemployment.csv") %>%
 
 ```
 
+```{r join_datasets}
+
+join_pols_snp = left_join(pols_month_data, snp_data, by = c("year", "month", "day"))
+
+join_all = left_join(join_pols_snp, unemployment_data, by = c("year", "month"))
+```
+
