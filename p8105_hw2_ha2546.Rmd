@@ -57,7 +57,7 @@ prcpt_data
 In Mr. Trash Wheel data, we have `r nrow(trash_data)` observations, and we have key variables such as dumpster, month, year, and date. In resulting precipitation dataset which we obtained from combining precipitation data of 2017 and 2018, we have `r nrow(prcpt_data)` total precipitation observations in total and we have ey variables month and year. According to the precipitation dataset, the total precipitation in 2018 is `r sum(pull(prcpt2018_data, total))` inches and the median number of sports balls in a dumpster in 2017 is `r median(pull(filter(trash_data, year == 2017), sports_balls))`.
 
 ## Problem 2
-First part, dealing with FiveThirtyEight data.
+In problem two, we are dealing with FiveThirtyEight data which is composed of different .csv files. First, I cleaned the data in pols_month.csv file. This data contains pieces of information about democratic/republican politicians. I started cleaning up by cleaning the names and then seperating date (originally "mon" variable) into year, month, and day variables and used convert = true to convert them to integers (these were characters). Then I made a new column named "president" which shows whether the president was republican or democrat. This column will essentially include information from prez_gop and prez_dem columns, so for doing this, I just recoded the information in prez_gop column. After creating the president variable, I no longer need prez_gop and prez_dem columns, so I just removed these variables as well as the variable day that was mentioned in the problem.  
 ```{r prob2_pols_month}
 
 pols_month_data = read_csv("data/pols-month.csv") %>% 
