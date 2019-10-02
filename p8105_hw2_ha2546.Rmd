@@ -17,7 +17,7 @@ library(dplyr)
 library(readxl)
 
 trash_data = 
-  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "Mr. Trash Wheel") %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel") %>% 
   janitor::clean_names() %>% 
   select(-x15) %>% 
   drop_na(dumpster) %>% 
@@ -31,7 +31,7 @@ trash_data =
 ```{r precipitation}
 
 prcpt2017_data = 
-  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2017 Precipitation", skip = 1) %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2017 Precipitation", skip = 1) %>% 
   janitor::clean_names() %>% 
   drop_na() %>% 
   mutate(
@@ -39,7 +39,7 @@ prcpt2017_data =
   )
 
 prcpt2018_data = 
-  read_excel("data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = "2018 Precipitation", skip = 1) %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", skip = 1) %>% 
   janitor::clean_names() %>% 
   drop_na() %>% 
   mutate(
@@ -56,35 +56,33 @@ prcpt_data
 
 In Mr. Trash Wheel data, we have `r nrow(trash_data)` observations, and we have key variables such as dumpster, month, year, and date. In resulting precipitation dataset which we obtained from combining precipitation data of 2017 and 2018, we have `r nrow(prcpt_data)` total precipitation observations in total and we have ey variables month and year. According to the precipitation dataset, the total precipitation in 2018 is `r sum(pull(prcpt2018_data, total))` inches and the median number of sports balls in a dumpster in 2017 is `r median(pull(filter(trash_data, year == 2017), sports_balls))`.
 
+## Problem 2
+First part, dealing with FiveThirtyEight data.
 ```{r prob2_pols_month}
 
 pols_month_data = read_csv("data/pols-month.csv") %>% 
   janitor::clean_names() %>%
-  separate(mon, into = c("year", "month", "day")) %>% 
+  separate(mon, into = c("year", "month", "day"), convert = TRUE) %>% 
   mutate(
-    year = as.integer(year),
-    day = as.integer(day),
-    month = month.abb[as.integer(month)],
+    prez_gop = replace(prez_gop, prez_gop == "2", "1"),
+    month = month.abb[(month)],
     president = recode(prez_gop, "1" = "gop" , "0" = "dem"),
   ) %>% 
-    select(-starts_with("prez"))
+    select(-starts_with("prez"), -day)
 
 ```
+
+for prez_gop there were four observations that were coded as 2 instead of 1. I first changed them to 1 as advised by TA's and then recoded.
 
 ```{r prob2_snp}
 
 snp_data = read_csv("data/snp.csv") %>% 
   janitor::clean_names() %>% 
-  separate(date, into = c("month", "day", "year")) %>%    # why seperates like this?
-  mutate (
-    year = as.integer(year),
-    day = as.integer(day),
-    month = as.integer(month)
-  ) %>% 
+  separate(date, into = c("month", "day", "year"), convert = TRUE) %>%
   arrange(year, month) %>% 
-  select(year, month, day, close) %>% 
-  mutate(                                                 # had to mutate twice(?)
-    month = month.abb[as.integer(month)]
+  select(year, month, close) %>% 
+  mutate(
+    month = month.abb[(month)]
   )
 
 ```
@@ -95,7 +93,7 @@ unemployment_data = read_csv("data/unemployment.csv") %>%
   pivot_longer(
     Jan:Dec,
     names_to = "month",
-    values_to = "unemployment_percent"
+    values_to = "unemp_prcnt"
   ) %>% 
     janitor::clean_names()                                      #can we use janitor here?
 
@@ -103,7 +101,7 @@ unemployment_data = read_csv("data/unemployment.csv") %>%
 
 ```{r join_datasets}
 
-join_pols_snp = full_join(pols_month_data, snp_data, by = c("year", "month"))
+join_pols_snp = left_join(pols_month_data, snp_data, by = c("year", "month"))
 
 join_all = left_join(join_pols_snp, unemployment_data, by = c("year", "month")) 
 
