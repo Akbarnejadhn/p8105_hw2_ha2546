@@ -57,29 +57,35 @@ prcpt_data
 In Mr. Trash Wheel data, we have `r nrow(trash_data)` observations, and we have key variables such as dumpster, month, year, and date. In resulting precipitation dataset which we obtained from combining precipitation data of 2017 and 2018, we have `r nrow(prcpt_data)` total precipitation observations in total and we have ey variables month and year. According to the precipitation dataset, the total precipitation in 2018 is `r sum(pull(prcpt2018_data, total))` inches and the median number of sports balls in a dumpster in 2017 is `r median(pull(filter(trash_data, year == 2017), sports_balls))`.
 
 ## Problem 2
-In problem two, we are dealing with FiveThirtyEight data which is composed of different .csv files. First, I cleaned the data in pols_month.csv file. This data contains pieces of information about democratic/republican politicians. I started cleaning up by cleaning the names and then seperating date (originally "mon" variable) into year, month, and day variables and used convert = true to convert them to integers (these were characters). Then I made a new column named "president" which shows whether the president was republican or democrat. This column will essentially include information from prez_gop and prez_dem columns, so for doing this, I just recoded the information in prez_gop column. After creating the president variable, I no longer need prez_gop and prez_dem columns, so I just removed these variables as well as the variable day that was mentioned in the problem.  
+* **Part 1**
+
+In problem two, we are dealing with FiveThirtyEight data which is composed of different .csv files. First, I cleaned the data in pols_month.csv file. This data contains pieces of information about democratic/republican politicians. I started cleaning up by cleaning the names and then seperating date (originally "mon" variable) into year, month, and day variables and used convert = true to convert them to integers (these were characters). Then I made a new column named "president" which shows whether the president was republican or democrat. This column will essentially include information from prez_gop and prez_dem columns, so for doing this, I just recoded the information in prez_gop column. After creating the president variable, I no longer need prez_gop and prez_dem columns, so I just removed these variables as well as the variable day that was mentioned in the problem.
+
+Note: I observed two "2" values in prez_gop while the values in this column should be either either 0 or 1. So Ijust assumed these values are supposed to be "1" and before recoding, to the president column, I replaced them with "1".
+
 ```{r prob2_pols_month}
 
 pols_month_data = read_csv("data/pols-month.csv") %>% 
   janitor::clean_names() %>%
   separate(mon, into = c("year", "month", "day"), convert = TRUE) %>% 
   mutate(
-    prez_gop = replace(prez_gop, prez_gop == "2", "1"),
     month = month.abb[(month)],
+    prez_gop = replace(prez_gop, prez_gop == "2", "1"),
     president = recode(prez_gop, "1" = "gop" , "0" = "dem"),
   ) %>% 
-    select(-starts_with("prez"), -day)
+   select(year, month, president, everything(), -starts_with("prez"), -day)
 
 ```
 
-for prez_gop there were four observations that were coded as 2 instead of 1. I first changed them to 1 as advised by TA's and then recoded.
+* **Part 2**
+
+Second, I neede to clean the snp data. The process for this part is very similar to part 1 of this problem, but I also had to arrange year and month variables' order, and I did not select day because it I did not need that according to the problem. Then I turned month from numeric format to English names abbreviations.
 
 ```{r prob2_snp}
 
 snp_data = read_csv("data/snp.csv") %>% 
   janitor::clean_names() %>% 
   separate(date, into = c("month", "day", "year"), convert = TRUE) %>%
-  arrange(year, month) %>% 
   select(year, month, close) %>% 
   mutate(
     month = month.abb[(month)]
