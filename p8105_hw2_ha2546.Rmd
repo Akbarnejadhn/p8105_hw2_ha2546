@@ -59,9 +59,9 @@ In Mr. Trash Wheel data, we have `r nrow(trash_data)` observations, and we have 
 ## Problem 2
 * **Part 1**
 
-In problem two, we are dealing with FiveThirtyEight data which is composed of different .csv files. First, I cleaned the data in pols_month.csv file. This data contains pieces of information about democratic/republican politicians. I started cleaning up by cleaning the names and then seperating date (originally "mon" variable) into year, month, and day variables and used convert = true to convert them to integers (these were characters). Then I made a new column named "president" which shows whether the president was republican or democrat. This column will essentially include information from prez_gop and prez_dem columns, so for doing this, I just recoded the information in prez_gop column. After creating the president variable, I no longer need prez_gop and prez_dem columns, so I just removed these variables as well as the variable day that was mentioned in the problem.
+Problem two was dealing with _FiveThirtyEight_ data which was composed of different .csv files. First, I started cleaning the data in _pols_month.csv_ file by cleaning the names and seperating date variable( _mon_ ) into _year_, _month_, and _day_ variables and then converted them to integers. I then transformed month's format to English abbreviation format. On the next step, I made a new column named _president_ which will include information from _prez_gop_ and _prez_dem_ columns, I just recoded the information in _prez_gop_ column and removed these two columns, as well as the variable _day_ that was mentioned in the problem.
 
-Note: I observed two "2" values in prez_gop while the values in this column should be either either 0 or 1. So Ijust assumed these values are supposed to be "1" and before recoding, to the president column, I replaced them with "1".
+Note: I observed two "2" values in _prez_gop_ while the values in this column should be either either "0" or "1". So I just assumed these values are supposed to be "1" and before recoding to the president column, I replaced them with "1".
 
 ```{r prob2_pols_month}
 
@@ -79,7 +79,7 @@ pols_month_data = read_csv("data/pols-month.csv") %>%
 
 * **Part 2**
 
-Second, I neede to clean the snp data. The process for this part is very similar to part 1 of this problem, but I also had to arrange year and month variables' order, and I did not select day because it I did not need that according to the problem. Then I turned month from numeric format to English names abbreviations.
+Second, I cleaned the _snp.csv_. The process for cleaning this part is very similar to part 1, the only thing different was that because of how the data is structured, I also had to alter _year_ and _month_ variables' order and arrange them as my leading variables. I did not select _day_ variable in this part as well because of consistency with previous part. Then I turned _month_ from numeric format to English abbreviation format.
 
 ```{r prob2_snp}
 
@@ -93,6 +93,10 @@ snp_data = read_csv("data/snp.csv") %>%
 
 ```
 
+** **part3**
+
+In the third part, I tidied up the _unemplyment_data_. This dataset is composed of 1 column for year, and 12 columns for different months of a year. To tidy this dataset, I had to transform it from wide format to long format, using unemployment rates as my values and created a new variable _month_ instead of having each month as a variable. I then cleaned the names of my columns using janitor. Now this dataset has key variables _year_ and _month_ which are consitent with orevious datasets and this will enable us to join them on the next step.
+
 ```{r prob2_unemployment}
 
 unemployment_data = read_csv("data/unemployment.csv") %>% 
@@ -101,9 +105,13 @@ unemployment_data = read_csv("data/unemployment.csv") %>%
     names_to = "month",
     values_to = "unemp_prcnt"
   ) %>% 
-    janitor::clean_names()                                      #can we use janitor here?
+    janitor::clean_names()            
 
 ```
+
+** **Part 4**
+
+On the final step for this problem, I first left joined the _snp_data_ to _pols_month_data_, using key variables _year_ and _month_, and then joined the _unemployment_data_ to the result.
 
 ```{r join_datasets}
 
@@ -115,6 +123,13 @@ join_all = left_join(join_pols_snp, unemployment_data, by = c("year", "month"))
 # left vs full join
 ```
 
+** **Results**
+
+In problem 2, we were dealing with _pols_month_, _snp_, and _unemployment_ datasets of the _FiveThirtyEight_ data.
+
+After tidying these datasets, _pols_month_ data is a `r dim(pols_month_data)` has `r ncol(pols_month_data)` variables including _year_ and _month_ as key variables, _president_ which shows whether the president was republican or democrat, and the number of governors ( _gov_ ), the number of senators ( _sen_ ), and the number of representatives ( _rep_ ) for both republican and democratic parties on associated dates. The dataset contains `r nrow(pols_month_data)` observations for these variables.
+
+The resulting dataset _snp_data_ is composed of `r nrow(snp_data)` observations of `r ncol(snp_data)`variables.
 
 ## Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
@@ -125,12 +140,10 @@ pop_names_data = read_csv("data/Popular_Baby_Names.csv") %>%
   mutate(
     childs_first_name = str_to_title(childs_first_name),
     gender = str_to_lower(gender),
-    ethnicity = replace(ethnicity, ethnicity == "ASIAN AND PACI" , "ASIAN AND PACIFIC ISLANDER"),
-    ethnicity = replace(ethnicity, ethnicity == "WHITE NON HISP", "WHITE NON HISPANIC"),
-    ethnicity = replace(ethnicity, ethnicity == "BLACK NON HISP", "BLACK NON HISPANIC")
+    ethnicity = recode(ethnicity, "ASIAN AND PACI" = "ASIAN AND PACIFIC ISLANDER", "WHITE NON HISP" = "WHITE NON HISPANIC", "BLACK NON HISP" = "BLACK NON HISPANIC")
   ) %>% 
   mutate(
-    ethnicity = str_to_title(ethnicity)                  # should we make gender and ethnicity lower case?!
+    ethnicity = str_to_title(ethnicity)               
   )
 
 pop_names_data = distinct(pop_names_data)
@@ -139,11 +152,13 @@ pop_names_data = distinct(pop_names_data)
 
 ```{r prob3_Olivia_name}
 
-olivia_pop = filter(pop_names_data, childs_first_name == "Olivia") %>% 
+olivia_pop = filter(pop_names_data, childs_first_name == "Olivia" & gender == "female") %>% 
   select(year_of_birth, ethnicity, rank) %>% 
 pivot_wider(
   names_from = "year_of_birth", 
   values_from = "rank")
+
+olivia_pop
 ```
 
 ```{r prob3_male_pop}
@@ -153,14 +168,16 @@ male_pop = filter(pop_names_data, gender == "male" & rank == "1") %>%
 pivot_wider(
   names_from = "year_of_birth", 
   values_from = "childs_first_name")
+
+male_pop
 ```
 
 ```{r prob3_scatterplot}
 
 pop_scatterplot = pop_names_data %>% 
   filter(gender == "male" & ethnicity == "White Non Hispanic" & year_of_birth == "2016") %>% 
-  ggplot(aes(x = rank, y = count)) + geom_point() + geom_text(aes(label = childs_first_name),hjust = 0, vjust = 0)
+  ggplot(aes(x = rank, y = count)) + geom_point()
 
-# what is this?!
+pop_scatterplot
 ```
 
