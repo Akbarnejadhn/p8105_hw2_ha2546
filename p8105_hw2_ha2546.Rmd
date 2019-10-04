@@ -72,7 +72,6 @@ In Mr. Trash Wheel data, we have `r nrow(trash_data)` observations, and `r ncol(
 
 # Problem 2
 ## Part 1
-
 Problem two was dealing with _FiveThirtyEight_ data which was composed of different .csv files. First, I started cleaning the data in _pols_month.csv_ file by cleaning the names and seperating date variable( _mon_ ) into _year_, _month_, and _day_ variables and then converted them to integers. I then transformed month's format to English abbreviation format. On the next step, I made a new column named _president_ which will include information from _prez_gop_ and _prez_dem_ columns, I just recoded the information in _prez_gop_ column and removed these two columns, as well as the variable _day_ that was mentioned in the problem.
 
 Note: I observed two "2" values in _prez_gop_ while the values in this column should be either either "0" or "1". So I just assumed these values are supposed to be "1" and before recoding to the president column, I replaced them with "1".
@@ -92,7 +91,6 @@ pols_month_data = read_csv("data/pols-month.csv") %>%
 ```
 
 ## Part 2
-
 Second, I cleaned the _snp.csv_. The process for cleaning this part is very similar to part 1, the only thing different was that because of how the data is structured, I also had to alter _year_ and _month_ variables' order and arrange them as my leading variables. I did not select _day_ variable in this part as well because of consistency with previous part. Then I turned _month_ from numeric format to English abbreviation format.
 
 ```{r prob2_snp}
@@ -108,7 +106,6 @@ snp_data = read_csv("data/snp.csv") %>%
 ```
 
 ## Part 3
-
 In the third part, I tidied up the _unemplyment_data_. This dataset is composed of 1 column for year, and 12 columns for different months of a year. To tidy this dataset, I had to transform it from wide format to long format, using unemployment rates as my values and created a new variable _month_ instead of having each month as a variable. I then cleaned the names of my columns using janitor. Deoing so makes the dataset consitent with previous datasets and this will enable us to join them on the next step.
 
 ```{r prob2_unemployment}
@@ -124,7 +121,6 @@ unemployment_data = read_csv("data/unemployment.csv") %>%
 ```
 
 ## Part 4
-
 On the final step for this problem, I first left-joined the _snp_data_ to _pols_month_data_, using keys _year_ and _month_, and then left-joined the _unemployment_data_ to the result.
 
 ```{r join_datasets}
@@ -135,7 +131,6 @@ join_pols_snp_unemp = left_join(pols_month_data, snp_data, by = c("year", "month
 ```
 
 ## Results
-
 In problem 2, we were dealing with _pols_month_, _snp_, and _unemployment_ datasets of the _FiveThirtyEight_ data.
 
 After tidying these datasets, _pols_month_ dataset's dimension is `r dim(pols_month_data)` which means it has `r ncol(pols_month_data)` variables including _year_ and _month_, _president_ which shows whether the president was republican or democrat, and the number of governors ( _gov_ ), the number of senators ( _sen_ ), and the number of representatives ( _rep_ ) for both republican and democratic parties on associated dates. The dataset contains `r nrow(pols_month_data)` observations for these variables, and the range of years investigated is `r max(pull(pols_month_data, year)) - min(pull(pols_month_data, year))` years (between `r range(pull(pols_month_data, year))`).
@@ -145,6 +140,9 @@ The dimension of the resulting dataframe _snp_data_ is `r dim(snp_data)` which m
 After cleaning up, the resulting _unemployment_ dataset is a `r dim(unemployment_data)` dimension dataset: `r nrow(unemployment_data)` observations of `r ncol(unemployment_data)` variables including _year_, _month_, and another variable called _unemp_prcnt_ which shows unemployement percentage associated with these dates. The range of years for these data equals: `r max(pull(unemployment_data, year))`-`r min(pull(unemployment_data, year))` = `r max(pull(unemployment_data, year)) - min(pull(unemployment_data, year))` years.
 
 # Problem 3
+## Part 1
+This problem deals with _Popular Baby Names_ dataset. In the first part, I cleaned the data by addressing some problems it had: some names were title case and some were upper case, I converted all to title case. Also, in the _ethnicity variable_ some ethnicities were coded with two different titles, I recoded them and made them uniform. I also title cased ethnicity and lower cased gender just because I thought it is more readable and nice. Finally, I chose the distinct rows as there were some repetitives.
+
 ```{r prob3_pop_names}
 
 pop_names_data = read_csv("data/Popular_Baby_Names.csv") %>% 
@@ -160,6 +158,9 @@ pop_names_data = read_csv("data/Popular_Baby_Names.csv") %>%
 
 ```
 
+## Part 2
+In this part, I created a table which shows how the rank of the female name "Olivia" has changed over time in different ethnicity groups.The rows of this table are the four ethnicity groups, the columns are years, and the values are the ranks of the name "Olivia".
+
 ```{r prob3_Olivia_name}
 
 olivia_pop = filter(pop_names_data, childs_first_name == "Olivia" & gender == "female") %>% 
@@ -170,7 +171,11 @@ pivot_wider(
   knitr::kable()
 
 olivia_pop
+
 ```
+
+## Part 3
+In this part, I created another table for the most popular male names over time in different ethnicity groups. The rows are ethnicity groups and the columns are years. the cells of the table includes the names. 
 
 ```{r prob3_male_pop}
 
@@ -182,7 +187,11 @@ pivot_wider(
   knitr::kable()
 
 male_pop
+
 ```
+
+## Part 4
+Finally, I created a scatterplot for white non hispanic boys who were born in 2016 and. In this scatterplot we can observe that as we expect, as the rank value becomes bigger, the count becomes smaller which simply shows decrease in the popularity of those names.
 
 ```{r prob3_scatterplot}
 
@@ -191,5 +200,6 @@ pop_scatterplot = pop_names_data %>%
   ggplot(aes(x = rank, y = count)) + geom_point()
 
 pop_scatterplot
+
 ```
 
