@@ -68,11 +68,13 @@ prcpt_data =
 
 ```
 
-In Mr. Trash Wheel data, we have `r nrow(trash_data)` observations, and `r ncol(trash_data)` of variables such as _dumpster_, _weight_ and _volume_ of trash for each dumpster, and the number of _plastic bottles_, _cigarette butts_, etc. In resulting precipitation dataset which we obtained from combining precipitation data of 2017 and 2018, we have `r nrow(prcpt_data)` total precipitation observations of variables _month_, _year_, and _total_ precipitation. According to this dataset, the total precipitation in 2018 is `r sum(pull(prcpt2018_data, total))` inches and the median number of sports balls in a dumpster in 2017 is `r median(pull(filter(trash_data, year == 2017), sports_balls))`.
+In Mr. Trash Wheel data, we have `r nrow(trash_data)` observations, and `r ncol(trash_data)` of variables such as _dumpster_, _weight_ and _volume_ of trash for each dumpster, and the number of _plastic bottles_, _cigarette butts_, etc.
+
+In resulting precipitation dataset which we obtained from combining precipitation data of 2017 and 2018, we have `r nrow(prcpt_data)` total precipitation observations of variables _month_, _year_, and _total_ precipitation. According to this dataset, the total precipitation in 2018 is `r sum(pull(prcpt2018_data, total))` inches and the median number of sports balls in a dumpster in 2017 is `r median(pull(filter(trash_data, year == 2017), sports_balls))`.
 
 # Problem 2
 ## Part 1
-Problem two was dealing with _FiveThirtyEight_ data which was composed of different .csv files. First, I started cleaning the data in _pols_month.csv_ file by cleaning the names and seperating date variable( _mon_ ) into _year_, _month_, and _day_ variables and then converted them to integers. I then transformed month's format to English abbreviation format. On the next step, I made a new column named _president_ which will include information from _prez_gop_ and _prez_dem_ columns, I just recoded the information in _prez_gop_ column and removed these two columns, as well as the variable _day_ that was mentioned in the problem.
+Problem two was dealing with _FiveThirtyEight_ data which was composed of different .csv files. First, I started cleaning the data in _pols_month.csv_ file by cleaning the names and seperating date variable( _mon_ ) into _year_, _month_, and _day_ variables and converted them to integers. I then transformed month's format to English abbreviation format. On the next step, I made a new column named _president_ which will include information from _prez_gop_ and _prez_dem_ columns, I just recoded the information in _prez_gop_ column and removed these two columns, as well as the variable _day_ that was mentioned in the problem.
 
 Note: I observed two "2" values in _prez_gop_ while the values in this column should be either either "0" or "1". So I just assumed these values are supposed to be "1" and before recoding to the president column, I replaced them with "1".
 
@@ -106,7 +108,7 @@ snp_data = read_csv("data/snp.csv") %>%
 ```
 
 ## Part 3
-In the third part, I tidied up the _unemplyment_data_. This dataset is composed of 1 column for year, and 12 columns for different months of a year. To tidy this dataset, I had to transform it from wide format to long format, using unemployment rates as my values and created a new variable _month_ instead of having each month as a variable. I then cleaned the names of my columns using janitor. Deoing so makes the dataset consitent with previous datasets and this will enable us to join them on the next step.
+In the third part, I tidied up the _unemplyment_data_. This dataset is composed of 1 column for year, and 12 columns for different months of a year. To tidy this dataset, I had to transform it from wide format to long format, using unemployment rates as my values and created a new variable _month_ instead of having each month as a variable. I then cleaned the names of my columns using janitor. Doing so makes the dataset consitent with previous datasets and this will enables us to join them on the next step.
 
 ```{r prob2_unemployment}
 
